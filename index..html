@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="fr" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kermesse Notre Dame de Cesson-Sévigné 2026</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&amp;family=Pacifico&amp;family=Fredoka:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+  :root {
+    --cream: #FDF6E8;
+    --mint: #7FC4B5;
+    --orange: #F28C4A;
+    --pink: #E87FA6;
+    --yellow: #F4C542;
+    --purple: #8B6BB0;
+    --teal: #3B8A94;
+    --navy: #2B4C6F;
+    --red: #D65A5A;
+    --sage: #A8C97A;
+  }
+  
+  html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: 'Fredoka', sans-serif;
+    background: var(--cream);
+    color: var(--navy);
+    overflow-x: hidden;
+  }
+  
+  .font-display { font-family: 'Montserrat', sans-serif; font-weight: 900; }
+  .font-script { font-family: 'Pacifico', cursive; }
+  .font-body { font-family: 'Fredoka', sans-serif; }
+  
+  .scroll-container {
+    height: 100%;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+  
+  .snap-section {
+    scroll-snap-align: start;
+    min-height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  @media (max-width: 768px) {
+    .scroll-container { scroll-snap-type: y proximity; }
+  }
+  
+  /* Confetti animation */
+  .confetti {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    opacity: 0.9;
+    animation: float 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+  }
+  
+  /* Flags */
+  .flag {
+    display: inline-block;
+    width: 28px;
+    height: 36px;
+    margin: 0 2px;
+    clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%);
+    animation: sway 3s ease-in-out infinite;
+    transform-origin: top center;
+  }
+  
+  @keyframes sway {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+  
+  .flag-string {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+  
+  .flag-string::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 5%;
+    right: 5%;
+    height: 2px;
+    background: var(--navy);
+    border-radius: 2px;
+  }
+  
+  /* Building hover effects */
+  .building {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .building:hover {
+    transform: translateY(-12px) scale(1.05);
+    filter: drop-shadow(0 20px 25px rgba(0,0,0,0.15));
+  }
+  
+  .building-label {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  
+  .building:hover .building-label {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  
+  /* Section reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .reveal-delay-1 { transition-delay: 0.15s; }
+  .reveal-delay-2 { transition-delay: 0.3s; }
+  .reveal-delay-3 { transition-delay: 0.45s; }
+  
+  /* Floating animation for icons */
+  @keyframes floatIcon {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-15px) rotate(2deg); }
+  }
+  
+  .float-icon {
+    animation: floatIcon 4s ease-in-out infinite;
+  }
+  
+  /* Placeholder style */
+  .photo-placeholder {
+    background: rgba(255,255,255,0.15);
+    border: 3px dashed rgba(255,255,255,0.5);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+  }
+  
+  .photo-placeholder:hover {
+    background: rgba(255,255,255,0.25);
+    border-color: rgba(255,255,255,0.8);
+  }
+  
+  /* Cloud decoration */
+  .cloud {
+    position: absolute;
+    opacity: 0.4;
+    animation: drift 20s linear infinite;
+  }
+  
+  @keyframes drift {
+    from { transform: translateX(-100px); }
+    to { transform: translateX(calc(100vw + 100px)); }
+  }
+  
+  /* Progress indicator */
+  .progress-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(43, 76, 111, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: block;
+    margin: 8px 0;
+  }
+  
+  .progress-dot.active {
+    background: var(--navy);
+    transform: scale(1.5);
+  }
+  
+  .progress-dot:hover {
+    background: var(--navy);
+  }
+  
+  /* Button styles */
+  .btn-primary {
+    background: var(--navy);
+    color: var(--cream);
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+  }
+  
+  .btn-primary:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+  }
+  
+  /* Scroll indicator */
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+  }
+  
+  .scroll-indicator {
+    animation: bounce-slow 2s ease-in-out infinite;
+  }
+  
+  /* Sun rays for hero */
+  @keyframes rotate-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  .sun-rays {
+    animation: rotate-slow 30s linear infinite;
+  }
+  
+  /* Grass decoration */
+  .grass {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(to top, var(--sage) 0%, transparent 100%);
+    opacity: 0.4;
+  }
+  
+  /* Responsive text */
+  .text-hero {
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    line-height: 1;
+  }
+  
+  .text-section-title {
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    line-height: 1.1;
+  }
+  /* Animation pour le défilement infini des partenaires */
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll {
+  display: flex;
+  width: max-content;
+  animation: scroll 25s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full w-full"><!-- Progress Navigation -->
+  <nav class="fixed right-4 md:right-6 top-1/2 -translate-y-1/2 z-50 bg-white/80 backdrop-blur-md rounded-full px-2 py-3 shadow-lg hidden sm:block" aria-label="Navigation des sections">
+   <div id="progress-nav"></div>
+  </nav>
+  <main class="scroll-container h-full w-full" id="main-scroll"><!-- HERO SECTION -->
+   <section class="snap-section flex flex-col items-center justify-center relative" style="background: linear-gradient(180deg, #FDF6E8 0%, #F4E4C1 100%);" id="section-0"><!-- Sun decoration -->
+    <div class="absolute top-10 right-10 md:top-20 md:right-32 w-32 h-32 md:w-48 md:h-48 pointer-events-none">
+     <div class="sun-rays w-full h-full relative">
+      <div class="absolute inset-0 rounded-full" style="background: radial-gradient(circle, var(--yellow) 0%, var(--orange) 100%); box-shadow: 0 0 60px var(--yellow);"></div>
+     </div>
+    </div><!-- Clouds -->
+    <svg class="cloud top-16 left-10" width="80" height="40" viewbox="0 0 80 40" style="animation-delay: 0s;"><ellipse cx="20" cy="25" rx="15" ry="12" fill="white" /> <ellipse cx="40" cy="20" rx="20" ry="15" fill="white" /> <ellipse cx="60" cy="25" rx="15" ry="12" fill="white" />
+    </svg>
+    <svg class="cloud top-32 left-0" width="100" height="50" viewbox="0 0 100 50" style="animation-delay: -10s; animation-duration: 30s;"><ellipse cx="25" cy="30" rx="18" ry="14" fill="white" /> <ellipse cx="50" cy="25" rx="22" ry="17" fill="white" /> <ellipse cx="75" cy="30" rx="18" ry="14" fill="white" />
+    </svg><!-- Flags garland -->
+    <div class="absolute top-0 left-0 right-0 flag-string px-4"><span class="flag" style="background: var(--mint); animation-delay: 0s;"></span> <span class="flag" style="background: var(--orange); animation-delay: 0.2s;"></span> <span class="flag" style="background: var(--pink); animation-delay: 0.4s;"></span> <span class="flag" style="background: var(--yellow); animation-delay: 0.6s;"></span> <span class="flag" style="background: var(--purple); animation-delay: 0.8s;"></span> <span class="flag" style="background: var(--teal); animation-delay: 1.0s;"></span> <span class="flag" style="background: var(--red); animation-delay: 1.2s;"></span> <span class="flag" style="background: var(--mint); animation-delay: 1.4s;"></span> <span class="flag" style="background: var(--orange); animation-delay: 1.6s;"></span> <span class="flag" style="background: var(--pink); animation-delay: 1.8s;"></span> <span class="flag" style="background: var(--yellow); animation-delay: 2.0s;"></span>
+    </div><!-- Confetti -->
+    <div id="confetti-container" class="absolute inset-0 pointer-events-none"></div>
+    <div class="relative z-10 text-center px-6 max-w-5xl mx-auto pt-16">
+     <p id="hero-subtitle" class="font-script text-2xl md:text-4xl mb-4 reveal" style="color: var(--orange);">Bienvenue dans</p>
+     <h1 id="hero-title" class="font-display text-hero mb-6 reveal reveal-delay-1" style="color: var(--navy); text-shadow: 4px 4px 0 rgba(232, 127, 166, 0.3);">La Kermesse</h1>
+     <div class="flex flex-wrap justify-center gap-3 mb-8 reveal reveal-delay-2"><span class="px-4 py-2 rounded-full font-bold text-sm md:text-base" style="background: var(--mint); color: white;"><a href="#section-art-infos" class="hover:underline">🎨 Arts</a></span> <span class="px-4 py-2 rounded-full font-bold text-sm md:text-base" style="background: var(--orange); color: white;"><a href="#section-art-musique">🎵 Musique</a></span> <span class="px-4 py-2 rounded-full font-bold text-sm md:text-base" style="background: var(--pink); color: white;"><a href="#section-art-theatre">🎭 Spectacles</a></span> <span class="px-4 py-2 rounded-full font-bold text-sm md:text-base" style="background: var(--purple); color: white;"><a href="#section-art-litterature">📚 Stands</a></span>
+     </div>
+     <p id="hero-date" class="text-lg md:text-2xl font-bold mb-2 reveal reveal-delay-3" style="color: var(--teal);">Dimanche 28 Juin 2026</p>
+     <p id="hero-school" class="text-base md:text-lg reveal reveal-delay-3" style="color: var(--navy);">École Notre Dame de Cesson-Sévigné</p>
+     <div class="mt-10 reveal reveal-delay-3"><button class="btn-primary" onclick="document.getElementById('section-1').scrollIntoView({behavior: 'smooth'})"> Explorer la cité des arts → </button>
+     </div>
+    </div><!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator"><i data-lucide="chevron-down" class="w-8 h-8" style="color: var(--navy);"></i>
+    </div>
+    <div class="grass"></div>
+   </section><!-- CITY OVERVIEW SECTION -->
+   <section class="snap-section flex flex-col items-center justify-center relative py-16 px-6" style="background: linear-gradient(180deg, #F4E4C1 0%, #FDF6E8 100%);" id="section-1">
+    <div class="max-w-6xl mx-auto w-full">
+     <div class="text-center mb-12">
+      <p class="font-script text-2xl md:text-3xl mb-2 reveal" style="color: var(--pink);">Explorez</p>
+      <h2 class="font-display text-section-title reveal reveal-delay-1" style="color: var(--navy);">Les espaces de la Cité</h2>
+      <p class="mt-4 text-base md:text-lg max-w-2xl mx-auto reveal reveal-delay-2" style="color: var(--teal);">Survolez chaque bâtiment pour découvrir la kermesse ✨</p>
+     </div><!-- City grid -->
+     <div class="grid grid-cols-3 md:grid-cols-5 gap-3 md:gap-6 max-w-5xl mx-auto reveal reveal-delay-3" id="city-grid"><!-- Buildings populated by JS -->
+     </div>
+    </div>
+    <div class="grass"></div>
+   </section>
+   
+   
+   <section class="snap-section flex items-center justify-center relative py-16 px-6"  id="section-art-infos" style="background: linear-gradient(135deg, rgb(242, 140, 74) 0%, rgb(222, 120, 54) 100%); color: rgb(253, 246, 232);">
+    <div class="max-w-6xl mx-auto w-full" >
+     <div class="text-center mb-12">
+      <p class="font-script text-2xl md:text-3xl mb-2 reveal" style="color: #FDF6E8;">Rendez-vous</p>
+      <h2 class="font-display text-section-title reveal reveal-delay-1" style="color: #FDF6E8;">Où ? Et Quand ?</h2>
+     </div>
+     <div class="grid md:grid-cols-2 gap-8 reveal reveal-delay-2" class="order-1">
+	 <!-- Where card -->
+      <div class="bg-white rounded-3xl p-8 md:p-10 shadow-lg hover:shadow-xl transition-shadow">
+       <div class="flex items-center gap-3 mb-6"><span class="text-4xl">🗺️</span>
+        <h3 class="font-display text-2xl" style="color: var(--navy);">Où ?</h3>
+       </div>
+       <p class="text-base md:text-lg mb-4" style="color: var(--navy);">La Kermesse aura lieu à l'école Notre Dame de Cesson-Sévigné.</p>
+       <p id="where-address" class="font-bold text-lg mb-6" style="color: var(--teal);">45 Bis Rue des Lauriers<br>
+        35510 Cesson-Sévigné</p><button class="btn-primary w-full text-center" onclick="showToast('📍 Itinéraire ouvert'); window.open('https://maps.google.com/?q=45+Bis+Rue+des+Lauriers+Cesson-Sévigné', '_blank', 'noopener,noreferrer');">Voir l'itinéraire →</button>
+      </div>
+	  <!-- When card -->
+      <div class="bg-white rounded-3xl p-8 md:p-10 shadow-lg hover:shadow-xl transition-shadow">
+       <div class="flex items-center gap-3 mb-6"><span class="text-4xl">📅</span>
+        <h3 class="font-display text-2xl" style="color: var(--navy);">Quand ?</h3>
+       </div>
+       <p id="when-date" class="font-bold text-xl mb-4" style="color: var(--navy);">Le dimanche 28 juin 2026</p>
+       <p id="when-times" class="text-base md:text-lg mb-6" style="color: var(--navy);">À partir de 12h jusqu'à 18h</p>
+       <div class="p-4 rounded-xl" style="background: rgba(127, 196, 181, 0.1); border-left: 4px solid var(--mint);">
+        <p class="text-sm font-bold" style="color: var(--navy);">💒 Messe à 11h</p>
+        <p class="text-sm opacity-80" style="color: var(--navy);" >Église Saint Martin</p>
+       </div>
+      </div>
+     </div>
+	 <!-- Stats -->
+	 <div class="mt-8 flex gap-6 reveal reveal-delay-3 active"  class="order-2">
+	  <div>
+		<p class="font-display text-3xl md:text-4xl" style="color: #FDF6E8;">#01</p>
+		<p class="text-sm opacity-80">Section</p>
+	  </div>
+	  <div class="w-px opacity-30" style="background: #FDF6E8;"></div>
+	  <div>
+		<p class="font-display text-3xl md:text-4xl" style="color: #FDF6E8;">🎨</p>
+		<p class="text-sm opacity-80">Univers</p>
+	  </div>
+	 </div>
+	 <!-- Section number indicator -->
+	 <div class="absolute bottom-6 left-6 md:bottom-8 md:left-8 font-display text-6xl md:text-8xl opacity-10" class="order-3" style="color: #FDF6E8;">
+	  01
+	 </div>
+    </section>
+   
+   <!-- ART SECTIONS (populated by JS) -->
+   <div id="art-sections"></div>
+   
+   <!-- FAQ --> 
+   <section class="snap-section flex flex-col items-center justify-center relative py-16 px-6" style="background: var(--cream);" id="section-arts-faq">
+ <div class="max-w-4xl mx-auto w-full relative z-10">
+  <div class="text-center mb-12">
+   <p class="font-script text-2xl md:text-3xl mb-2 reveal" style="color: var(--pink);">Des questions ?</p>
+   <h2 class="font-display text-section-title reveal reveal-delay-1" style="color: var(--navy);">Foire aux Questions</h2>
+  </div>
+
+  <div class="space-y-4 reveal reveal-delay-2">
+   <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-mint/20">
+    <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-mint/5 transition-colors" onclick="toggleFaq(this)">
+     <span class="font-bold text-lg" style="color: var(--navy);">Y a-t-il des cartes Pass vendues sur place? </span>
+     <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+    </button>
+    <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-mint/5">
+     <p class="px-6 py-4 text-gray-700">Des cartes Pass seront disponibles à l'accueil de la Kermesse. Vous pourrez régler en espèces ou CB.<br/>
+Vous pouvez anticiper vos achats de cartes Pass sur le site hello asso mis à votre disposition jusqu'au 18 juin. (règlement par carte bancaire) : https://www.helloasso.com/associations/apel-notre-dame-de-cesson-sevigne/boutiques/kermesse-prevente-2026</p>
+    </div>
+   </div>
+
+   <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-mint/20">
+    <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-mint/5 transition-colors" onclick="toggleFaq(this)">
+     <span class="font-bold text-lg" style="color: var(--navy);">De combien de Carte Pass ai-je besoin?</span>
+     <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+    </button>
+    <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-mint/5">
+     <p class="px-6 py-4 text-gray-700">Chaque stand nécessite ou non des tampons pour y accéder. Afin de vous permettre d'anticiper au mieux le nombre de Carte Pass dont vous avez besoin, vous trouverez ci-dessous un récapitulatif. 
+
+Afin d'économiser vos tampons, nous vous conseillons de ramener une EcoCup (gobelet) pour chaque membre de votre famille.<br/>
+
+Stands :
+Structure élémentaire :       4 tampons - 5mn
+Structure maternelle #1 :    3 tampons - 5mn
+Structure maternelle #2 :    3 tampons - 5mn
+Escalade  :                              5 tampons - 5mn
+Tatouage :                              1 tampon
+Roue de la fortune :              2 tampons
+Parcours sensoriel :              1 tampon
+
+Ecocup :                      2 tampons
+
+Eau plate :                 2 tampons
+Eau gazeuse :           2 tampons
+Jus de fruit :              3 tampons
+Sodas :                       3 tampons
+Thé - Café - Tisane : 2 tampons
+Bière :                        4 tampons
+
+Fruit :                         1 tampon
+Mr Freeze :               1 tampon
+Crêpe :                      2 tampons
+Barbe à Papa :         2 tampons
+Part de gâteaux :     2 tampons
+Pop Corn :                 4 tampons
+Bonbons :                 4 tampons
+‍</p>
+    </div>
+   </div>
+
+   <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-mint/20">
+    <button class="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-mint/5 transition-colors" onclick="toggleFaq(this)">
+     <span class="font-bold text-lg" style="color: var(--navy);">Comment aider sur les stands?</span>
+     <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+    </button>
+    <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-mint/5">
+     <p class="px-6 py-4 text-gray-700">Les stands sont tenus par des membres de l'APEL et des parents bénévoles. Cette année, chaque stand sera tenu par une classe de l'école afin de faciliter les activités. En effet, nous avons besoin d'un maximum de parents lors de cette rencontre. Si nous n'avons pas assez de bénévoles, nous serons dans l'obligation d'en fermer certains. </p>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="grass"></div>
+</section>
+<!-- FIN FAQ -->
+<!-- PARTENAIRES --> 
+<section class="snap-section flex flex-col items-center justify-center relative py-16 px-6" style="background: white;" id="section-partenaires">
+  <div class="max-w-6xl mx-auto w-full relative z-10">
+    <div class="text-center mb-12">
+      <p class="font-script text-2xl md:text-3xl mb-2 reveal" style="color: var(--orange);">Ils nous soutiennent</p>
+      <h2 class="font-display text-section-title reveal reveal-delay-1" style="color: var(--navy);">Nos Partenaires</h2>
+    </div>
+
+    <div class="relative overflow-hidden py-8">
+      <div class="flex space-x-12 animate-scroll whitespace-nowrap">
+        <div class="flex space-x-12 items-center">
+          <img src="logo1.png" alt="Partenaire 1" class="h-16 md:h-20 grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100 object-contain w-32">
+          <img src="logo2.png" alt="Partenaire 2" class="h-16 md:h-20 grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100 object-contain w-32">
+          <img src="logo3.png" alt="Partenaire 3" class="h-16 md:h-20 grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100 object-contain w-32">
+          <img src="logo4.png" alt="Partenaire 4" class="h-16 md:h-20 grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100 object-contain w-32">
+        </div>
+        <div class="flex space-x-12 items-center" aria-hidden="true">
+          <img src="logo1.png" alt="" class="h-16 md:h-20 grayscale opacity-70 w-32 object-contain">
+          <img src="logo2.png" alt="" class="h-16 md:h-20 grayscale opacity-70 w-32 object-contain">
+          <img src="logo3.png" alt="" class="h-16 md:h-20 grayscale opacity-70 w-32 object-contain">
+          <img src="logo4.png" alt="" class="h-16 md:h-20 grayscale opacity-70 w-32 object-contain">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- FIN PARTENAIRES --> 
+
+   <!-- FOOTER SECTION -->
+   <section class="snap-section flex flex-col items-center justify-center relative py-16 px-6" style="background: linear-gradient(180deg, var(--navy) 0%, #1a3556 100%); color: var(--cream);" id="section-footer"><!-- Decorative stars -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+     <div class="absolute top-10 left-10 text-3xl animate-pulse">
+      ✨
+     </div>
+     <div class="absolute top-20 right-20 text-2xl animate-pulse" style="animation-delay: 0.5s;">
+      ⭐
+     </div>
+     <div class="absolute bottom-40 left-20 text-2xl animate-pulse" style="animation-delay: 1s;">
+      ✨
+     </div>
+     <div class="absolute top-40 left-1/3 text-xl animate-pulse" style="animation-delay: 1.5s;">
+      ⭐
+     </div>
+     <div class="absolute bottom-20 right-10 text-3xl animate-pulse" style="animation-delay: 2s;">
+      ✨
+     </div>
+    </div>
+    <div class="max-w-5xl mx-auto w-full text-center relative z-10">
+     <div class="mb-10 reveal">
+      <p class="font-script text-3xl md:text-5xl mb-4" style="color: var(--yellow);">Stands - Spectacles - Restauration</p>
+      <p id="footer-slogan" class="font-display text-4xl md:text-6xl" style="color: var(--cream);">Kermesse</p>
+     </div>
+     <div class="grid md:grid-cols-3 gap-6 md:gap-8 mb-10">
+      <div class="bg-white/10 backdrop-blur rounded-2xl p-6 reveal reveal-delay-1">
+       <div class="flex justify-center mb-3">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center" style="background: var(--orange);"><i data-lucide="calendar" class="w-7 h-7 text-white"></i>
+        </div>
+       </div>
+       <h3 class="font-display text-lg mb-2" style="color: var(--yellow);">DATE</h3>
+       <p id="footer-date" class="font-bold text-lg">Dimanche 28 Juin 2026</p>
+       <p class="text-sm opacity-80">de 12h à 18h</p>
+      </div>
+      <div class="bg-white/10 backdrop-blur rounded-2xl p-6 reveal reveal-delay-2">
+       <div class="flex justify-center mb-3">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center" style="background: var(--pink);"><i data-lucide="map-pin" class="w-7 h-7 text-white"></i>
+        </div>
+       </div>
+       <h3 class="font-display text-lg mb-2" style="color: var(--yellow);">LIEU</h3>
+       <p id="footer-location" class="font-bold text-lg">École Notre Dame de Cesson-Sévigné</p>
+       <p class="text-sm opacity-80">45 Bis Rue des Lauriers, 35510 Cesson-Sévigné</p>
+      </div>
+      <div class="bg-white/10 backdrop-blur rounded-2xl p-6 reveal reveal-delay-3">
+       <div class="flex justify-center mb-3">
+        <div class="w-14 h-14 rounded-full flex items-center justify-center" style="background: var(--mint);"><i data-lucide="ticket" class="w-7 h-7 text-white"></i>
+        </div>
+       </div>
+       <h3 class="font-display text-lg mb-2" style="color: var(--yellow);">ENTRÉE</h3>
+       <p class="font-bold text-lg">Gratuite</p>
+       <p class="text-sm opacity-80">Restauration &amp; buvette sur place</p>
+      </div>
+     </div><!-- Contact icons -->
+     <div class="flex justify-center gap-4 mb-8 reveal"><a href="#" onclick="event.preventDefault(); showToast('📞 Numéro copié !')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--orange);" aria-label="Téléphone"> <i data-lucide="phone" class="w-5 h-5 text-white"></i> </a> <a href="#" onclick="event.preventDefault(); showToast('✉️ Adresse email copié !')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--pink);" aria-label="Email"> <i data-lucide="mail" class="w-5 h-5 text-white"></i> </a> <a href="#" onclick="event.preventDefault(); showToast('📍 Itinéraire')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--mint);" aria-label="Localisation"> <i data-lucide="map" class="w-5 h-5 text-white"></i> </a> <a href="#" onclick="event.preventDefault(); showToast('📷 Suivez-nous !')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--yellow);" aria-label="Instagram"> <i data-lucide="instagram" class="w-5 h-5 text-white"></i> </a>
+     </div>
+     <div class="pt-6 border-t border-white/20">
+      <p class="text-sm opacity-70">© 2026 <span id="footer-school">École Notre Dame</span> · Kermesse annuelle</p>
+     </div>
+    </div>
+   </section>
+  </main><!-- Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white text-gray-900 px-6 py-3 rounded-full shadow-2xl font-bold opacity-0 pointer-events-none transition-all duration-300 z-[100]">
+   Message
+  </div>
+  <script>
+  // Art sections data
+  const artSections = [
+    //{
+    //  id: 'arts-visuels',
+    //  name: 'Billetterie et Carte Pass',
+    //  subtitle: 'Manger et profiter',
+    //  color: '#F28C4A',
+    //  textColor: '#FDF6E8',
+    //  icon: 'palette',
+    //  emoji: '🎨',
+    //  description: 'Pour le bon déroulement de cette journée festive et afin d’en faciliter l’organisation, nous vous proposons la vente de menus et de cartes à points "Cartes Pass" valables pour les activités, boissons et goûters. Votre enveloppe nominative de précommande sera disponible au retrait vendredi 26 juin entre 16h30 et 19h à l\'école.',
+    //  activity: 'Commander mes cartes pass',
+	//  url : 'tests.url',
+	//  i: 2
+    //},
+    {
+      id: 'musique',
+      name: 'Billetterie et Carte Pass',
+      subtitle: 'S\'amuser, manger et boire',
+      color: '#E87FA6',
+      textColor: '#FDF6E8',
+      icon: 'music',
+      emoji: '🎵',
+      description: 'Pour le bon déroulement de cette journée festive et afin d’en faciliter l’organisation, nous vous proposons la vente de menus et de cartes à points 💳 "Cartes Pass" valables pour les activités, boissons et goûters. Attention les Cartes ne sont pas remboursables. <p class="text-sm mb-3 opacity-90 reveal reveal-delay-2 ">📅 Votre enveloppe nominative de précommande sera disponible au retrait vendredi 26 juin entre 16h30 et 19h à l\'école. </p>',
+      activity: 'Commander mes cartes pass',
+	  url : 'tests.url',
+	  i: 2
+    },
+    {
+      id: 'cinema',
+      name: 'Repas',
+      subtitle: 'Pour déjeuner',
+      color: '#8B6BB0',
+      textColor: '#FDF6E8',
+      icon: 'film',
+      emoji: '🎬',
+      description: 'La restauration est assurée par l\'équipe APEL sur place de midi à 14h.<br/> Les menus sont en précommande.<br/>Un achat sur place sera également possible,  <b>mais uniquement dans la limite des quantités disponibles</b> !<br/><p class="text-sm mb-3 opacity-90 reveal reveal-delay-2 ">📋 Menus proposés :<br/>✓ Galette Saucisse + Frites<br/>✓ Galette Saucisse + Tomates cerises<br/>✓ Galette Saucisse de volaille + Frites<br/>✓ Galette Saucisse de volaille + Tomates cerises</p>',
+      activity: 'Commander mes repas jusqu\'au XX juin',
+	  url : 'tests.url',
+	  i:3
+    },
+    {
+      id: 'bd',
+      name: 'Buvette et goûter',
+      subtitle: 'Avec votre carte Pass',
+      color: '#F4C542',
+      textColor: '#FDF6E8',
+      icon: 'book-open',
+      emoji: '💬',
+      //description: '<p class="text-sm mb-4" style="color: var(--navy);">Avec votre carte Pass, achetez rafraîchissements et boissons. Pour tous à tous les moments ! <div class="bg-teal-50 rounded-xl p-4 text-sm" style="color: var(--navy);"><p class="text-sm mb-3 opacity-90 reveal reveal-delay-2 ">🥛 Soda</br>🧃 Jus de fruits</br>💧 Eau fraîche<br/>🍻 Bière blanche ou blonde<br/>☕ Café</p></div></p>',
+      description : '<p class="text-white/80 max-w-2xl mx-auto mb-10" style="margin-bottom:0px">Profitez de notre espace détente pour vous rafraîchir ou savourer une douceur sucrée entre deux activités.<br/>Tous les achats se font avec vos 💳 "Cartes Pass".<br/>⚠️ Note importante : <b>Pensez bien à prendre des 🥤 éco-cups! Des eco-cups seront en vente sur place. Elles peuvent être rendus contre caution à partir de 17h uniquement. </b></p><div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto p-4" style="margin-bottom:0px"><div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all " style="margin-bottom:0px"><div class="flex items-center gap-3 mb-6"><div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: var(--mint);">🥤</div><h3 class="font-display text-xl" style="color: var(--navy);">Buvette</h3></div><div class="bg-teal-50 rounded-xl p-4 text-sm" style="color: var(--navy);"><p class="text-xs">🧃 Soda et jus de fruit</p><p class="text-xs">💧 Eau fraîche</p><p class="text-xs">🍻 Bière blanche ou blonde</p></div></div><div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all"><div class="flex items-center gap-3 mb-6"><div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: var(--pink);">🍰</div><h3 class="font-display text-xl" style="color: var(--navy);">Goûter</h3></div><div class="bg-pink-50 rounded-xl p-4 text-sm space-y-1" style="color: var(--navy);"><p class="text-xs">🥞 Crêpes</p><p class="text-xs">🎂 Gâteaux</p><p class="text-xs">🍿 Pop corn</p><p class="text-xs">🍭 Barbe à papa</p></div></div></div>',
+	  activity: '',
+	  i:4
+    },
+    {
+      id: 'theatre',
+      name: 'Programme',
+      subtitle: 'Les spectacles des enfants',
+      color: '#D65A5A',
+      textColor: '#FDF6E8',
+      icon: 'sparkles',
+      emoji: '💃',
+      description: 'Chorégraphies préparées par les enfants ',
+      activity: '',
+	  //additionalInfo : '<div class="w-1/2 max-w-2xl space-y-4"><div class="flex items-center space-x-4 border-l-4 border-white/50 pl-4"><span class="font-bold w-16">11h00</span><span class="bg-white/20 px-3 py-1 rounded">Messe (Église St Martin)</span></div><div class="flex items-center space-x-4 border-l-4 border-white/50 pl-4"><span class="font-bold w-16">12h00</span><span>Ouverture Restauration &amp; Buvette</span></div><div class="flex items-center space-x-4 border-l-4 border-white/50 pl-4"><span class="font-bold w-16">14h00</span><span class="font-bold  uppercase">Spectacle PS/MS</span></div><div class="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-white/20"><p class="text-xs uppercase opacity-70 col-span-2">Spectacles classes</p><div class="text-sm">14h30 - Claire (GS)</div><div class="text-sm">14h40 - Gwenaëlle (GS)</div><div class="text-sm">14h50 - CP (Béatrice/Caroline)</div><div class="text-sm font-bold">15h30 - TOMBOLA</div><div class="text-sm">16h00 - CE1 (Charlène)</div><div class="text-sm">17h00 - Marie (CM2)</div></div></div>',
+	  additionalInfo : '<div class="w-full max-w-2xl mx-auto px-4">   <div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/30 before:to-transparent">          <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#E87FA6] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">12h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Ouverture & Restauration</div>         <p class="text-sm text-white/80">Déjeuner.</p>       </div>     </div>      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F28C4A] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Ouverture des Stands</div>         <p class="text-sm text-white/80">Accès aux structures gonflables et jeux de la zone élémentaire.</p>       </div>     </div>      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#7FC4B5] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Spectacle des PS et MS</div>         <p class="text-sm text-white/80">Représentation des enfants sur scène.</p>       </div>     </div>      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F28C4A] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h30</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Ouverture des Stands de la Zone Maternelle</div>         <p class="text-sm text-white/80">Accès aux structures gonflables et jeux de la zone maternelle.</p>       </div>     </div> 	     <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F4C542] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h30</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Horaire des chorégraphies‍</div>         <p class="text-sm text-white/80"> 14h30 - Claire (GS)<br/> 14h40 - Gwenaëlle (GS)<br/> 14h50 - Béatrice et Caroline (CP)<br/> 15h00 - Laurence (CP)<br/> 15h10 - Pause<br/> 15h30 - Tirage de la tombola<br/> 16h - Charlène (CE1)<br/> 16h10 - Sabine (CE1)<br/> 16h20 - Floriane (CE2)<br/> 16h30 - Cécile BIZEUL (CE2)<br/> 16h40 - Gwenaëlle et Emmanuelle (CM1)<br/> 16h50 - Olivier et Anne-Marie (CM1)<br/> 17h00 - Marie (CM2)<br/> 17h10 - Cécile BONNEAU et Emmanuelle (CM2)<br/> </p>       </div>     </div>     	 	<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F4C542] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">18h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Fin de la Kermesse</div>         <p class="text-sm text-white/80"></p>       </div>     </div>    </div> </div>',
+	  i:5
+    },
+    {
+      id: 'litterature',
+      name: 'Stands',
+      subtitle: 'Pour s\'amuser',
+      color: '#7FC4B5',
+      textColor: '#FDF6E8',
+      icon: 'book',
+      emoji: '📚',
+      description: 'Retrouvez le nombre de points de chaque activité',
+      activity: '',
+	  //additionalInfo : '<div class="w-1/2 max-w-2xl space-y-4"><div class="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl"><div class="card text-center"><span class="text-3xl">🧗</span><h4 class="font-bold block mt-2">Mur Escalade</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">5 Tampons • +7 ans</span></div><div class="card text-center"><span class="text-3xl">🏰</span><h4 class="font-bold block mt-2">Château Gonflable</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">3 Tampons • -6 ans</span></div><div class="card text-center"><span class="text-3xl">🎯</span><h4 class="font-bold block mt-2">Chamboule-tout</h4><span class="text-xs bg-white text-[#78c0b0] px-2 py-1 rounded-full font-bold">GRATUIT</span></div><div class="card text-center"><span class="text-3xl">🦆</span><h4 class="font-bold block mt-2">Pêche aux canards</h4><span class="text-xs bg-white text-[#78c0b0] px-2 py-1 rounded-full font-bold">GRATUIT</span></div><div class="card text-center"><span class="text-3xl">🎨</span><h4 class="font-bold block mt-2">Tatouages</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">1 Tampon</span></div><div class="card text-center"><span class="text-3xl">🎡</span><h4 class="font-bold block mt-2">Roue Fortune</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">2 Tampons</span></div></div></div>',
+	  additionalInfo : '<div class="w-full max-w-2xl mx-auto px-4"><div class="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"><!-- Structure élémentaire --><div class="card text-center"><span class="text-3xl">🏰</span><h4 class="font-bold block mt-2">Structure élémentaire</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">3 Tampons</span></div><!-- Lancer de haches --><div class="card text-center"><span class="text-3xl">🪓</span><h4 class="font-bold block mt-2">Lancer de haches</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">2 Tampons</span></div><!-- Basket --><div class="card text-center"><span class="text-3xl">🏀</span><h4 class="font-bold block mt-2">Basket</h4><span class="text-xs bg-white text-[#78c0b0] px-2 py-1 rounded-full font-bold">GRATUIT</span></div><!-- Tour descalade --><div class="card text-center"><span class="text-3xl">🧗</span><h4 class="font-bold block mt-2">Tour d\'escalade</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">5 Tampons</span></div><!-- Chamboule-tout --><div class="card text-center"><span class="text-3xl">🎯</span><h4 class="font-bold block mt-2">Chamboule-tout</h4><span class="text-xs bg-white text-[#78c0b0] px-2 py-1 rounded-full font-bold">GRATUIT</span></div><!-- Parcours sensoriel --><div class="card text-center"><span class="text-3xl">👣</span><h4 class="font-bold block mt-2">Parcours sensoriel</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">1 Tampon</span></div><!-- Structure maternelle --><div class="card text-center"><span class="text-3xl">🎠</span><h4 class="font-bold block mt-2">Structure maternelle</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">3 Tampons</span></div><!-- Roue de la fortune --><div class="card text-center"><span class="text-3xl">🎡</span><h4 class="font-bold block mt-2">Roue de la fortune</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">2 Tampons</span></div><!-- Pêche aux canards --><div class="card text-center"><span class="text-3xl">🦆</span><h4 class="font-bold block mt-2">Pêche aux canards</h4><span class="text-xs bg-white text-[#78c0b0] px-2 py-1 rounded-full font-bold">GRATUIT</span></div><!-- Bac à sable --><div class="card text-center"><span class="text-3xl">🏖️</span><h4 class="font-bold block mt-2">Bac à sable</h4><span class="text-xs bg-white text-[#78c0b0] px-2 py-1 rounded-full font-bold">GRATUIT</span></div><!-- Chateau maternelle --><div class="card text-center"><span class="text-3xl">🏰</span><h4 class="font-bold block mt-2">Château maternelle</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">3 Tampons</span></div><!-- Maquillage --><div class="card text-center"><span class="text-3xl">🎨</span><h4 class="font-bold block mt-2">Maquillage</h4><span class="text-xs bg-black/20 px-2 py-1 rounded-full">1 Tampon</span></div><!-- Dessin --><div class="card text-center"><span class="text-3xl">🖍️</span><h4 class="font-bold block mt-2">Dessin</h4><span class="text-xs bg-white text-[#78c0b0] px-2 py-1 rounded-full font-bold">GRATUIT</span></div></div></div>',
+	  i:6
+    },
+    {
+      id: 'numerique',
+      name: 'Plan',
+      subtitle: 'Se repérer',
+      color: '#3B8A94',
+      textColor: '#FDF6E8',
+      icon: 'monitor',
+      emoji: '💻',
+      description: 'Pour bien comprendre où se rendre, retrouvez le plan des stands et animations du jour J. ',
+      activity: '',
+	  additionalInfo : '<div class="w-full "><img src="./Plan.png"/> </div>',
+	  i:7
+    },
+    {
+      id: 'danse',
+      name: 'Tombola',
+      subtitle: 'Gagner un lot',
+      color: '#A8C97A',
+      textColor: '#FDF6E8',
+      icon: 'megaphone',
+      emoji: '🎭',
+      description: '🌳 1er lot : un week-end en famille à Center Parcs d’une valeur de 500€ <br/>📷 2e lot : un shooting photo en famille d’une valeur de 240€ <br/>🎫 3e lot:  un pass d\'activités famille d’une valeur de 150€',
+      activity: '',
+	  i:8
+    },
+    {
+      id: 'sculpture',
+      name: 'Les volontaires',
+      subtitle: 'Grâce à vous seulement',
+      color: '#2B4C6F',
+      textColor: '#FDF6E8',
+      icon: 'shapes',
+      emoji: '🗿',
+      description: 'Chers parents, la Kermesse organisée par l\'APEL ne peut avoir lieu sans l\'aide de TOUS les parents.<br/>Depuis des mois, l\'équipe pense, organise, fabrique, finance... cette journée pour offrir un beau moment à vos enfants. <br/><b>⏱️ Maintenant c\'est à vous de jouer pour une demi-heure ou plus le jour J !</b>',
+      activity: 'Je rends la kermesse possible',
+	  url : 'test',
+	  i:9
+    }
+  ];
+
+  // Create confetti
+  function createConfetti() {
+    const container = document.getElementById('confetti-container');
+    const colors = ['#7FC4B5', '#F28C4A', '#E87FA6', '#F4C542', '#8B6BB0', '#3B8A94', '#D65A5A'];
+    const shapes = ['', 'border-radius: 50%;', 'transform: rotate(45deg);'];
+    
+    for (let i = 0; i < 40; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const shape = shapes[Math.floor(Math.random() * shapes.length)];
+      confetti.style.cssText = `
+        left: ${Math.random() * 100}%;
+        top: ${Math.random() * 100}%;
+        background: ${color};
+        animation-delay: ${Math.random() * 6}s;
+        animation-duration: ${4 + Math.random() * 4}s;
+        ${shape}
+      `;
+      container.appendChild(confetti);
+    }
+  }
+  function createCustomCity(color, textColor, name, emoji, sectionName) {
+	const grid = document.getElementById('city-grid');
+	const building = document.createElement('div');
+      building.className = 'building flex flex-col items-center';
+      building.onclick = () => {
+        document.getElementById(`${sectionName}`).scrollIntoView({ behavior: 'smooth' });
+      };
+      
+      // Random building height variations
+      const heights = ['h-32', 'h-40', 'h-36', 'h-44', 'h-32'];
+      const height = heights[1 % heights.length];
+      
+      building.innerHTML = `
+        <div class="relative">
+          <svg class="${height} w-20 md:w-24" viewBox="0 0 80 120" fill="none">
+            <!-- Roof -->
+            <polygon points="10,40 40,10 70,40" fill="${color}" />
+            <!-- Body -->
+            <rect x="15" y="40" width="50" height="70" fill="${color}" opacity="0.9"/>
+            <!-- Door -->
+            <rect x="33" y="80" width="14" height="30" fill="${textColor}" opacity="0.3" rx="2"/>
+            <!-- Windows -->
+            <rect x="22" y="55" width="12" height="12" fill="${textColor}" opacity="0.5" rx="2"/>
+            <rect x="46" y="55" width="12" height="12" fill="${textColor}" opacity="0.5" rx="2"/>
+            <!-- Chimney -->
+            <rect x="50" y="20" width="8" height="18" fill="${color}" opacity="0.7"/>
+          </svg>
+          <div class="absolute top-2 left-1/2 -translate-x-1/2 text-2xl">${emoji}</div>
+        </div>
+        <div class="building-label px-3 py-1 rounded-full text-xs md:text-sm font-bold text-white shadow-lg" style="background: ${color};">
+          ${name}
+        </div>
+      `;
+	  grid.appendChild(building);
+  }
+
+
+  // Create city buildings
+  function createCity() {
+	createCustomCity('#F28C4A', '#FDF6E8', 'Informations générales', '🎨', 'section-art-infos');
+	const grid = document.getElementById('city-grid');
+    artSections.forEach((art, index) => {
+      const building = document.createElement('div');
+      building.className = 'building flex flex-col items-center';
+      building.onclick = () => {
+        document.getElementById(`section-art-${art.id}`).scrollIntoView({ behavior: 'smooth' });
+      };
+      
+      // Random building height variations
+      const heights = ['h-32', 'h-40', 'h-36', 'h-44', 'h-32'];
+      const height = heights[index % heights.length];
+      
+      building.innerHTML = `
+        <div class="relative">
+          <svg class="${height} w-20 md:w-24" viewBox="0 0 80 120" fill="none">
+            <!-- Roof -->
+            <polygon points="10,40 40,10 70,40" fill="${art.color}" />
+            <!-- Body -->
+            <rect x="15" y="40" width="50" height="70" fill="${art.color}" opacity="0.9"/>
+            <!-- Door -->
+            <rect x="33" y="80" width="14" height="30" fill="${art.textColor}" opacity="0.3" rx="2"/>
+            <!-- Windows -->
+            <rect x="22" y="55" width="12" height="12" fill="${art.textColor}" opacity="0.5" rx="2"/>
+            <rect x="46" y="55" width="12" height="12" fill="${art.textColor}" opacity="0.5" rx="2"/>
+            <!-- Chimney -->
+            <rect x="50" y="20" width="8" height="18" fill="${art.color}" opacity="0.7"/>
+          </svg>
+          <div class="absolute top-2 left-1/2 -translate-x-1/2 text-2xl">${art.emoji}</div>
+        </div>
+        <div class="building-label px-3 py-1 rounded-full text-xs md:text-sm font-bold text-white shadow-lg" style="background: ${art.color};">
+          ${art.name}
+        </div>
+      `;
+      
+      grid.appendChild(building);
+    });
+	createCustomCity('#F28C4A', '#FDF6E8', 'FAQ', '📻', 'section-arts-faq');
+  }
+
+  // Create art sections
+  function createArtSections() {
+    const container = document.getElementById('art-sections');
+    artSections.forEach((art, index) => {
+      const section = document.createElement('section');
+      section.className = 'snap-section flex items-center justify-center relative py-16 px-6';
+      section.id = `section-art-${art.id}`;
+      section.dataset.index = index + 2;
+      section.style.background = `linear-gradient(135deg, ${art.color} 0%, ${adjustColor(art.color, -20)} 100%)`;
+      section.style.color = art.textColor;
+	  const i = art.i; 
+      
+      const isEven = index % 2 === 0;
+	  
+	  var isButton = 0;
+	  if (art.activity  === "")  isButton = 1;
+	  
+	  var isAdditionnalInfo = 1;
+	  if (!art.additionalInfo)  isAdditionnalInfo = 0;
+      
+	  if(isAdditionnalInfo) { 
+	   var htmlDivStart='<div class="flex flex-col md:flex-row items-center md:items-start gap-10 w-full max-w-6xl mx-auto px-6">';
+	   var htmlDivEnd='</div>';
+	   }
+	  else  { 
+	   var htmlDivStart='';
+	   var htmlDivEnd='';
+	   }
+      section.innerHTML =  ` ${htmlDivStart}
+        <!-- Decorative shapes -->
+        <div class="absolute top-10 ${isEven ? 'right-10' : 'left-10'} w-24 h-24 md:w-40 md:h-40 rounded-full opacity-20" style="background: ${art.textColor};"></div>
+        <div class="absolute bottom-20 ${isEven ? 'left-10' : 'right-10'} w-16 h-16 md:w-24 md:h-24 opacity-10" style="background: ${art.textColor}; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;"></div>
+        
+        <div class="max-w-6xl mx-auto ${isAdditionnalInfo ? 'flex-col  items-center justify-center gap-8 md:gap-16 w-full max-w-6xl mx-auto px-4' : 'w-full'} grid md:grid-cols-2 gap-8 md:gap-12 items-center relative z-10">
+          
+          <!-- Content side -->
+          <div class="${isEven ? 'order-1' : 'md:order-2'}">
+            <p class="font-script text-2xl md:text-4xl mb-3 reveal" style="color: ${art.textColor}; opacity: 0.8;">
+              ${art.subtitle}
+            </p>
+            <h2 class="font-display text-section-title mb-6 reveal reveal-delay-1" style="color: ${art.textColor};">
+              ${art.name}
+            </h2>
+            <p class="text-lg md:text-xl mb-8 reveal reveal-delay-2 max-w-lg" style="color: ${art.textColor}; opacity: 0.95;">
+              ${art.description}
+            </p>
+            <div class="${isButton ? 'invisible' : 'inline-flex items-center gap-3 px-6 py-3 rounded-full reveal reveal-delay-3'} " style="background: ${art.textColor}; color: ${art.color};">
+              <i data-lucide="sparkles" class="w-5 h-5"></i>
+              <a href="${art.url}"><span class="font-bold">${art.activity}</span></a>
+            </div>
+            
+            <!-- Stats -->
+            <div class="mt-8 flex gap-6 reveal reveal-delay-3">
+              <div>
+                <p class="font-display text-3xl md:text-4xl" style="color: ${art.textColor};">#${String(i).padStart(2, '0')}</p>
+                <p class="text-sm opacity-80">Section</p>
+              </div>
+              <div class="w-px opacity-30" style="background: ${art.textColor};"></div>
+              <div>
+                <p class="font-display text-3xl md:text-4xl" style="color: ${art.textColor};">${art.emoji}</p>
+                <p class="text-sm opacity-80">Univers</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Icon / placeholder side -->
+          <div class="${isEven ? 'order-2' : 'md:order-1'}  ${isAdditionnalInfo ? 'hidden' : 'flex flex-col items-center gap-4'}">
+            <div class="float-icon relative">
+              <div class="w-48 h-48 md:w-64 md:h-64 rounded-full flex items-center justify-center reveal" style="background: ${art.textColor}; opacity: 0.95;">
+                <i data-lucide="${art.icon}" class="w-24 h-24 md:w-32 md:h-32" style="color: ${art.color}; stroke-width: 1.5;"></i>
+              </div>
+              <div class="absolute -top-4 -right-4 w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center text-4xl md:text-5xl" style="background: ${art.textColor};">
+                ${art.emoji}
+              </div>
+            </div>
+          </div>
+        </div>
+		
+		  <!-- Additional informations -->
+          <p id="additionalInfo${section.id}" class="${isAdditionnalInfo ? 'flex flex-col items-center gap-4' : 'invisible'}" style="${isAdditionnalInfo ? '' : 'display:none;'}">
+               ${art.additionalInfo}
+          </p>
+		  
+          
+
+        
+        <!-- Section number indicator -->
+        <div class="absolute bottom-6 left-6 md:bottom-8 md:left-8 font-display text-6xl md:text-8xl opacity-10" style="color: ${art.textColor};">
+          ${String(i).padStart(2, '0')}
+        </div>
+      ${htmlDivEnd}`  ;
+      
+      container.appendChild(section);
+    });
+  }
+
+  // Helper: darken color
+  function adjustColor(hex, amount) {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const r = Math.max(0, Math.min(255, (num >> 16) + amount));
+    const g = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amount));
+    const b = Math.max(0, Math.min(255, (num & 0x0000FF) + amount));
+    return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+  }
+
+  // Create progress navigation
+  function createProgressNav() {
+    const nav = document.getElementById('progress-nav');
+    const totalSections = artSections.length + 5; // hero + city + arts + footer
+    for (let i = 0; i < totalSections; i++) {
+      const dot = document.createElement('button');
+      dot.className = 'progress-dot';
+      dot.setAttribute('aria-label', `Aller à la section ${i + 1}`);
+      dot.onclick = () => {
+        const sections = document.querySelectorAll('.snap-section');
+        if (sections[i]) sections[i].scrollIntoView({ behavior: 'smooth' });
+      };
+      if (i === 0) dot.classList.add('active');
+      nav.appendChild(dot);
+    }
+  }
+
+  // Intersection observer for reveal animations
+  function setupRevealObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.15 });
+    
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  }
+
+  // Track active section for nav
+  function setupSectionTracker() {
+    const scrollContainer = document.getElementById('main-scroll');
+    const sections = document.querySelectorAll('.snap-section');
+    const dots = document.querySelectorAll('.progress-dot');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+          const index = Array.from(sections).indexOf(entry.target);
+          dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+          });
+        }
+      });
+    }, { threshold: [0.5], root: scrollContainer });
+    
+    sections.forEach(s => observer.observe(s));
+  }
+
+  // Toast function
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(10px)';
+    }, 2500);
+  }
+
+  // Initialize everything
+  function init() {
+    createConfetti();
+    createCity();
+    createArtSections();
+    createProgressNav();
+    
+    // Re-initialize lucide icons
+    lucide.createIcons();
+    
+    // Setup observers after DOM is ready
+    setTimeout(() => {
+      setupRevealObserver();
+      setupSectionTracker();
+    }, 100);
+  }
+
+  // Element SDK integration
+  const defaultConfig = {
+    school_name: "École Notre Dame",
+    event_title: "La Kermesse",
+    event_subtitle: "Bienvenue dans",
+    event_date: "Dimanche 28 Juin 2026",
+    event_location: "École Notre Dame",
+    footer_slogan: "Kermesse Notre Dame de Cesson-Sévigné",
+    contact_phone: "01 23 45 67 89",
+    contact_email: "contact@ecole-notredame.fr"
+  };
+
+  function onConfigChange(config) {
+    const title = config.event_title || defaultConfig.event_title;
+    const titleParts = title.split(' ');
+    // Split title nicely
+    if (titleParts.length >= 3) {
+      const half = Math.ceil(titleParts.length / 2);
+      document.getElementById('hero-title').innerHTML = 
+        titleParts.slice(0, half).join(' ') + '<br>' + titleParts.slice(half).join(' ');
+    } else {
+      document.getElementById('hero-title').textContent = title;
+    }
+    
+    document.getElementById('hero-subtitle').textContent = config.event_subtitle || defaultConfig.event_subtitle;
+    document.getElementById('hero-date').textContent = config.event_date || defaultConfig.event_date;
+    document.getElementById('hero-school').textContent = config.school_name || defaultConfig.school_name;
+    document.getElementById('footer-slogan').textContent = config.footer_slogan || defaultConfig.footer_slogan;
+    document.getElementById('footer-date').textContent = config.event_date || defaultConfig.event_date;
+    document.getElementById('footer-location').textContent = config.event_location || defaultConfig.event_location;
+    document.getElementById('footer-school').textContent = config.school_name || defaultConfig.school_name;
+  }
+
+  function mapToCapabilities(config) {
+    return {
+      recolorables: [],
+      borderables: [],
+      fontEditable: undefined,
+      fontSizeable: undefined
+    };
+  }
+
+  function mapToEditPanelValues(config) {
+    return new Map([
+      ["school_name", config.school_name || defaultConfig.school_name],
+      ["event_title", config.event_title || defaultConfig.event_title],
+      ["event_subtitle", config.event_subtitle || defaultConfig.event_subtitle],
+      ["event_date", config.event_date || defaultConfig.event_date],
+      ["event_location", config.event_location || defaultConfig.event_location],
+      ["footer_slogan", config.footer_slogan || defaultConfig.footer_slogan],
+      ["contact_phone", config.contact_phone || defaultConfig.contact_phone],
+      ["contact_email", config.contact_email || defaultConfig.contact_email]
+    ]);
+  }
+
+  // Initialize
+  init();
+  
+  // Fonction pour gérer l'accordéon de la FAQ
+function toggleFaq(button) {
+  const content = button.nextElementSibling;
+  const icon = button.querySelector('i');
+  
+  // Fermer les autres questions (optionnel)
+  // document.querySelectorAll('#section-faq div.max-h-screen').forEach(...)
+
+  if (content.style.maxHeight && content.style.maxHeight !== "0px") {
+    content.style.maxHeight = "0px";
+    icon.style.transform = "rotate(0deg)";
+  } else {
+    content.style.maxHeight = content.scrollHeight + "px";
+    icon.style.transform = "rotate(180deg)";
+  }
+}
+
+  if (window.elementSdk) {
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange,
+      mapToCapabilities,
+      mapToEditPanelValues
+    });
+  }
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f503876a6b9d145',t:'MTc3NzY1MzU0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
