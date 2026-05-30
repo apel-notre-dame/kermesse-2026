@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kermesse Invaders - Hall of Fame</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            z-index: 1;
+            animation: moveStars 20s linear infinite;
+        }
+
+        @keyframes moveStars {
+            from { background-position: 0 0; }
+            to { background-position: 0 1000px; }
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            padding: 30px 10px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px #00ff00;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #ff00ff;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        /* Formulaire d'inscription */
+        .form-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px dashed #00ff00;
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto 30px auto;
+            border-radius: 10px;
+        }
+
+        input[type="text"] {
+            background: #000;
+            border: 2px solid #ff00ff;
+            color: #fff;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            outline: none;
+            text-transform: uppercase;
+            width: 80%;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        button:hover {
+            background: #fff;
+            box-shadow: 0 0 15px #fff;
+        }
+
+        /* Tableau des scores style Arcade */
+        .leaderboard {
+            background: rgba(255, 0, 0, 0.05);
+            border: 2px solid #ff0000;
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .leaderboard h2 {
+            color: #ffff00;
+            margin-top: 0;
+            letter-spacing: 2px;
+        }
+
+        .score-table {
+            width: 100%;
+            font-size: 1.2rem;
+            border-collapse: collapse;
+        }
+
+        .score-table tr {
+            height: 35px;
+        }
+
+        .score-table td {
+            padding: 5px;
+        }
+
+        .rank { color: #ff00ff; text-align: left; width: 15%; }
+        .name { color: #fff; text-align: left; }
+        .time { color: #ffff00; text-align: right; width: 30%; }
+
+        /* Grille Mario */
+        .game-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .mario-character {
+            width: 70px;
+            height: 70px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 3s ease-in-out infinite alternate;
+        }
+
+        .mario-character img { width: 50px; height: 50px; image-rendering: pixelated; }
+
+        @keyframes float {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <div class="content">
+        <h1>Mission Bonus</h1>
+        <p class="subtitle">👾 Zone secrète débloquée ! 👾</p>
+
+        <!-- Petite ligne de personnages pour le décor -->
+        <div class="game-grid">
+            <div class="mario-character"><img src="https://img.icons8.com/?size=100&id=6bCexBbbpP6o&format=png&color=000000" alt="Mario"></div>
+            <div class="mario-character" style="animation-delay: 0.4s; border-color: #ff0000;"><img src="https://img.icons8.com/color/96/luigi.png" alt="Luigi"></div>
+            <div class="mario-character" style="animation-delay: 0.8s;"><img src="https://www.pngall.com/wp-content/uploads/19/Whimsical-Mario-Bros-Question-Mark-Box-PNG.png" alt="Peach"></div>
+            <div class="mario-character" style="animation-delay: 1.2s; border-color: #ff0000;"><img src="https://img.icons8.com/color/96/mario.png" alt="Bowser"></div>
+        </div>
+
+        <!-- Formulaire pour enregistrer son nom -->
+        <div class="form-container" id="formSection">
+            <h3 style="margin-top:0; color:#fff;">Inscris ton nom dans l'histoire !</h3>
+            <input type="text" id="playerName" placeholder="TON PRÉNOM" maxlength="15">
+            <br>
+            <button onclick="saveScore()">VALIDER</button>
+        </div>
+
+        <!-- Le Tableau d'affichage (Leaderboard) -->
+        <div class="leaderboard">
+            <h2>🏆 TOP 10 DES EXPLORATEURS 🏆</h2>
+            <table class="score-table">
+                <tbody id="leaderboardBody">
+                    <!-- Les lignes s'ajouteront ici dynamiquement via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        // Fonction pour charger et afficher les scores au démarrage
+        function displayScores() {
+            const leaderboardBody = document.getElementById('leaderboardBody');
+            // On récupère les scores enregistrés, ou un tableau vide s'il n'y en a pas encore
+            let scores = JSON.parse(localStorage.getItem('kermesseScores')) || [];
+
+            // On vide le tableau HTML actuel
+            leaderboardBody.innerHTML = '';
+
+            // Si aucun score, on met un message sympa
+            if (scores.length === 0) {
+                leaderboardBody.innerHTML = '<tr><td colspan="3" style="color:#aaa; font-size:1rem;">La liste est vide... Sois le premier !</td></tr>';
+                return;
+            }
+
+            // On affiche jusqu'au top 10
+            scores.slice(0, 10).forEach((player, index) => {
+                let row = `
+                    <tr>
+                        <td class="rank">#${index + 1}</td>
+                        <td class="name">${player.name}</td>
+                        <td class="time">${player.date}</td>
+                    </tr>
+                `;
+                leaderboardBody.innerHTML += row;
+            });
+        }
+
+        // Fonction pour enregistrer un nouveau nom
+        function saveScore() {
+            const nameInput = document.getElementById('playerName');
+            const name = nameInput.value.trim().toUpperCase();
+
+            if (name === '') {
+                alert('Oups ! Tu dois écrire ton prénom ou tes initiales.');
+                return;
+            }
+
+            // Récupérer la date et l'heure actuelle (Format: 14h32)
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+            // Récupérer la liste existante
+            let scores = JSON.parse(localStorage.getItem('kermesseScores')) || [];
+
+            // Ajouter le nouveau joueur
+            scores.push({ name: name, date: timeString });
+
+            // Sauvegarder dans le navigateur
+            localStorage.setItem('kermesseScores', JSON.stringify(scores));
+
+            // Cacher le formulaire pour éviter de s'inscrire 10 fois d'affilée
+            document.getElementById('formSection').style.display = 'none';
+
+            // Mettre à jour l'affichage
+            displayScores();
+        }
+
+        // Charger les scores dès que la page s'ouvre
+        window.onload = displayScores;
+    </script>
+</body>
+</html>
