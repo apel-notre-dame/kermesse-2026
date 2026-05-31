@@ -287,30 +287,220 @@
 .animate-scroll:hover {
   animation-play-state: paused;
 }
+
+/* --- STYLES RETRO CONTROLLER KONAMI --- */
+/* --- STYLES RETRO CONTROLLER KONAMI (CORRIGÉ MOBILE) --- */
+.retro-container {
+  background: #2b2b2b;
+  border: 4px solid #1a1a1a;
+  border-radius: 20px;
+  box-shadow: inset 0 0 20px #000, 0 10px 25px rgba(0,0,0,0.4);
+  padding: 15px;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.retro-controller {
+  background: #cccccc;
+  border: 5px solid #333333;
+  border-radius: 12px;
+  position: relative;
+  padding: 15px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 6px 0 #999999, 0 12px 15px rgba(0,0,0,0.3);
+  box-sizing: border-box;
+  gap: 5px; /* Évite les collisions brutales */
+}
+
+/* Le bandeau noir central style NES */
+.retro-controller::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 20%; bottom: 20%;
+  background: #333333;
+  z-index: 1;
+}
+
+/* La croix directionnelle (D-PAD) - Sécurisée contre le rétrécissement */
+.d-pad {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0; /* Interdit au navigateur de déformer la croix */
+  z-index: 2;
+}
+.d-pad-btn {
+  position: absolute;
+  background: #222222;
+  border: 2px solid #111;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.d-pad-btn:active, .d-pad-btn.active {
+  background: #e87fa6; /* Rose de votre charte graphique */
+}
+.d-pad-up { top: 0; left: 30px; width: 30px; height: 32px; border-radius: 4px 4px 0 0; }
+.d-pad-down { bottom: 0; left: 30px; width: 30px; height: 32px; border-radius: 0 0 4px 4px; }
+.d-pad-left { top: 30px; left: 0; width: 32px; height: 30px; border-radius: 4px 0 0 4px; }
+.d-pad-right { top: 30px; right: 0; width: 32px; height: 30px; border-radius: 0 4px 4px 0; }
+/*.d-pad-center { top: 30px; left: 30px; width: 30px; height: 30px; background: #222222; pointer-events: none; }*/
+
+/* Boutons Select & Start - Plus discrets pour laisser de la place */
+.center-buttons {
+  display: flex;
+  gap: 8px;
+  transform: translateY(20px);
+  z-index: 2;
+  flex-shrink: 0;
+}
+.pill-btn {
+  background: #555555;
+  width: 32px;
+  height: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid #222;
+}
+
+/* Boutons d'action A et B - Sécurisés aussi */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  background: #999999;
+  padding: 6px 10px;
+  border-radius: 30px;
+  border: 3px solid #333;
+  z-index: 2;
+  transform: rotate(-8deg);
+  flex-shrink: 0;
+}
+.action-circle {
+  width: 34px;
+  height: 34px;
+  background: #a30000;
+  border-radius: 50%;
+  border: 2px solid #222;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #5f0000;
+}
+.action-circle:active, .action-circle.active {
+  background: #e87fa6;
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+/* Jauge de réussite */
+.konami-history {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 15px;
+  flex-wrap: wrap; /* Permet de passer sur 2 lignes proprement sur très petit écran */
+}
+.history-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #444;
+  border: 2px solid #111;
+}
+.history-dot.success {
+  background: #00ff66;
+  box-shadow: 0 0 8px #00ff66;
+}
 </style>
   <style>body { box-sizing: border-box; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script>
-    // Le fameux Code Konami : Haut, Haut, Bas, Bas, Gauche, Droite, Gauche, Droite, B, A
-    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-    let currentInput = [];
+// Le fameux Code Konami : Haut, Haut, Bas, Bas, Gauche, Droite, Gauche, Droite, B, A
+  const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  let currentInput = [];
 
-    document.addEventListener('keydown', (e) => {
-        // On ajoute la touche pressée au tableau
-        currentInput.push(e.key);
-        
-        // On garde uniquement le nombre de touches nécessaires
-        currentInput = currentInput.slice(-konamiCode.length);
+  // Fonction centrale pour valider une touche (clavier ou manette virtuelle)
+  function handleKonamiInput(keyName) {
+      currentInput.push(keyName);
+      
+      // On vérifie si la touche saisie correspond à l'étape actuelle attendue dans le code
+      const currentCheckIndex = currentInput.length - 1;
+      
+      if (currentInput[currentCheckIndex] !== konamiCode[currentCheckIndex]) {
+          // Mauvaise touche ! On réinitialise tout
+          currentInput = [];
+          // Si la touche pressée était en fait la première du code (Flèche Haut), on démarre à 1
+          if (keyName === konamiCode[0]) {
+              currentInput.push(keyName);
+          }
+      }
 
-        // Si le code correspond, on redirige vers la page secrète !
-        if (JSON.stringify(currentInput) === JSON.stringify(konamiCode)) {
-            window.location.href = 'kermesse-bonus.html'; // Nom de votre page secrète
-        }
-    });
+      // Mise à jour visuelle des billes de la jauge
+      updateHistoryDots();
+
+      // Si le code complet est validé !
+      if (JSON.stringify(currentInput) === JSON.stringify(konamiCode)) {
+          showToast('👾 CODE LÉGENDAIRE ACTIVÉ ! 👾');
+          setTimeout(() => {
+              window.location.href = 'kermesse-bonus.html'; // Nom de votre page secrète
+          }, 1000);
+      }
+  }
+
+  // Met à jour l'allumage des billes vertes de progression
+  function updateHistoryDots() {
+      const dots = document.querySelectorAll('#konamiHistory .history-dot');
+      dots.forEach((dot, index) => {
+          if (index < currentInput.length) {
+              dot.classList.add('success');
+          } else {
+              dot.classList.remove('success');
+          }
+      });
+  }
+
+  // Écouteur 1 : Le Clavier physique
+  document.addEventListener('keydown', (e) => {
+      // Pour éviter les conflits de casse sur B et A
+      let key = e.key;
+      if (key === 'B' || key === 'b') key = 'b';
+      if (key === 'A' || key === 'a') key = 'a';
+
+      // On anime visuellement le bouton de la manette virtuelle correspondant
+      const visualBtn = document.querySelector(`[data-key="${key}"]`);
+      if (visualBtn) {
+          visualBtn.classList.add('active');
+          setTimeout(() => visualBtn.classList.remove('active'), 150);
+      }
+
+      if (konamiCode.includes(key)) {
+          handleKonamiInput(key);
+      }
+  });
+
+  // Écouteur 2 : La manette cliquable / tactile (Attend que le DOM soit chargé)
+  document.addEventListener('DOMContentLoaded', () => {
+      const interactiveButtons = document.querySelectorAll('.d-pad-btn, .action-circle');
+      interactiveButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+              const key = btn.getAttribute('data-key');
+              handleKonamiInput(key);
+          });
+      });
+  });
 </script>
  </head>
  <body class="h-full w-full"><!-- Progress Navigation -->
-  <nav class="fixed right-4 md:right-6 top-1/2 -translate-y-1/2 z-50 bg-white/80 backdrop-blur-md rounded-full px-2 py-3 shadow-lg hidden sm:block" aria-label="Navigation des sections">
+  <nav class="fixed right-4 md:right-6 top-1/2 -translate-y-1/2 z-50 bg-white/80 backdrop-blur-md rounded-full px-2 py-3 shadow-lg block" aria-label="Navigation des sections">
    <div id="progress-nav"></div>
   </nav>
   <main class="scroll-container h-full w-full" id="main-scroll"><!-- HERO SECTION -->
@@ -431,35 +621,36 @@ Vous pouvez anticiper vos achats de cartes Pass sur le site hello asso mis à vo
      <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
     </button>
     <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out bg-mint/5">
-     <p class="px-6 py-4 text-gray-700">Chaque stand nécessite ou non des tampons pour y accéder. Afin de vous permettre d'anticiper au mieux le nombre de Carte Pass dont vous avez besoin, vous trouverez ci-dessous un récapitulatif. 
+     <p class="px-6 py-4 text-gray-700">Chaque stand nécessite ou non des tampons pour y accéder. Afin de vous permettre d'anticiper au mieux le nombre de Carte Pass dont vous avez besoin, vous trouverez ci-dessous un récapitulatif. <br/>
 
-Afin d'économiser vos tampons, nous vous conseillons de ramener une EcoCup (gobelet) pour chaque membre de votre famille.<br/>
+Afin d'économiser vos tampons, nous vous conseillons de ramener une éco-cup (gobelet) pour chaque membre de votre famille.<br/>
+<br/>
+Stands :<br/>
+Structure élémentaire :       4 tampons - 5mn<br/>
+Structure maternelle #1 :    3 tampons - 5mn<br/>
+Structure maternelle #2 :    3 tampons - 5mn<br/>
+Mur escalade  :                              5 tampons - 5mn<br/>
+Tatouage et Maquillage :                              1 tampon<br/>
+Roue de la fortune :              2 tampons<br/>
+Parcours sensoriel :              1 tampon<br/>
+Lancer de haches :              1 tampon<br/>
 
-Stands :
-Structure élémentaire :       4 tampons - 5mn
-Structure maternelle #1 :    3 tampons - 5mn
-Structure maternelle #2 :    3 tampons - 5mn
-Escalade  :                              5 tampons - 5mn
-Tatouage :                              1 tampon
-Roue de la fortune :              2 tampons
-Parcours sensoriel :              1 tampon
+Eco-cup :                      2 tampons<br/>
 
-Ecocup :                      2 tampons
+Eau plate :                 2 tampons<br/>
+Eau gazeuse :           2 tampons<br/>
+Jus de fruit :              3 tampons<br/>
+Sodas :                       3 tampons<br/>
+Thé - Café - Tisane : 2 tampons<br/>
+Bière :                        4 tampons<br/>
 
-Eau plate :                 2 tampons
-Eau gazeuse :           2 tampons
-Jus de fruit :              3 tampons
-Sodas :                       3 tampons
-Thé - Café - Tisane : 2 tampons
-Bière :                        4 tampons
-
-Fruit :                         1 tampon
-Mr Freeze :               1 tampon
-Crêpe :                      2 tampons
-Barbe à Papa :         2 tampons
-Part de gâteaux :     2 tampons
-Pop Corn :                 4 tampons
-Bonbons :                 4 tampons
+Fruit :                         1 tampon<br/>
+Mr Freeze :               1 tampon<br/>
+Crêpe :                      2 tampons<br/>
+Barbe à Papa :         2 tampons<br/>
+Part de gâteaux :     2 tampons<br/>
+Pop Corn :                 4 tampons<br/>
+Bonbons :                 4 tampons<br/>
 ‍</p>
     </div>
    </div>
@@ -478,6 +669,59 @@ Bonbons :                 4 tampons
  <div class="grass"></div>
 </section>
 <!-- FIN FAQ -->
+<section class="snap-section flex flex-col items-center justify-center relative py-16 px-6" style="background: linear-gradient(180deg, #A8C97A 0%, #7FC4B5 100%);" id="section-konami-code">
+  <div class="max-w-4xl mx-auto w-full relative z-10 text-center">
+    
+    <div class="mb-8">
+      <p class="font-script text-2xl md:text-3xl mb-2" style="color: var(--navy);">Participe à la quête de la Kermesse</p>
+      <h2 class="font-display text-section-title" style="color: var(--navy); text-shadow: 2px 2px 0 rgba(255,255,255,0.4);">Quête bonus de la Kermesse</h2>
+      <p class="mt-2 text-sm md:text-base opacity-90 max-w-md mx-auto" style="color: var(--navy);">
+        Utilise la manette rétro ci-dessous ou les touches de ton clavier pour activer le bonus secret de la kermesse.
+      </p>
+    </div>
+
+    <div class="retro-container">
+      <div class="retro-controller">
+        
+        <div class="d-pad">
+          <div class="d-pad-btn d-pad-up" data-key="ArrowUp" title="Haut"></div>
+          <div class="d-pad-down d-pad-btn" data-key="ArrowDown" title="Bas"></div>
+          <div class="d-pad-left d-pad-btn" data-key="ArrowLeft" title="Gauche"></div>
+          <div class="d-pad-right d-pad-btn" data-key="ArrowRight" title="Droite"></div>
+          <div class="d-pad-center"></div>
+        </div>
+
+        <div class="center-buttons">
+          <div class="flex flex-col items-center"><div class="pill-btn"></div><span class="text-[8px] font-bold text-gray-400 mt-1">SELECT</span></div>
+          <div class="flex flex-col items-center"><div class="pill-btn"></div><span class="text-[8px] font-bold text-gray-400 mt-1">START</span></div>
+        </div>
+
+        <div class="action-buttons">
+          <div class="flex flex-col items-center"><div class="action-circle" data-key="b">B</div><span class="text-xs font-bold text-gray-800 mt-1">B</span></div>
+          <div class="flex flex-col items-center"><div class="action-circle" data-key="a">A</div><span class="text-xs font-bold text-gray-800 mt-1">A</span></div>
+        </div>
+
+      </div>
+
+      <div class="konami-history" id="konamiHistory">
+        <div class="history-dot"></div>
+        <div class="history-dot"></div>
+        <div class="history-dot"></div>
+        <div class="history-dot"></div>
+        <div class="history-dot"></div>
+        <div class="history-dot"></div>
+        <div class="history-dot"></div>
+        <div class="history-dot"></div>
+        <div class="history-dot"></div>
+        <div class="history-dot"></div>
+      </div>
+    </div>
+
+    <p class="text-xs mt-4 font-mono opacity-75 hidden" style="color: var(--navy);">INDICE : ⬆️ ⬆️ ⬇️ ⬇️ ⬅️ ➡️ ⬅️ ➡️ B A</p>
+
+  </div>
+  <div class="grass"></div>
+</section>
 <!-- PARTENAIRES --> 
 <section class="snap-section flex flex-col items-center justify-center relative py-16 px-6" style="background: white;" id="section-partenaires">
   <div class="max-w-6xl mx-auto w-full relative z-10">
@@ -579,7 +823,7 @@ Bonbons :                 4 tampons
        <p class="text-sm opacity-80">Restauration &amp; buvette sur place</p>
       </div>
      </div><!-- Contact icons -->
-     <div class="flex justify-center gap-4 mb-8 reveal"><a href="#" onclick="event.preventDefault(); showToast('📞 Numéro copié !')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--orange);" aria-label="Téléphone"> <i data-lucide="phone" class="w-5 h-5 text-white"></i> </a> <a href="#" onclick="event.preventDefault(); showToast('✉️ Adresse email copié !')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--pink);" aria-label="Email"> <i data-lucide="mail" class="w-5 h-5 text-white"></i> </a> <a href="#" onclick="event.preventDefault(); showToast('📍 Itinéraire')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--mint);" aria-label="Localisation"> <i data-lucide="map" class="w-5 h-5 text-white"></i> </a> <a href="#" onclick="event.preventDefault(); showToast('📷 Suivez-nous !')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--yellow);" aria-label="Instagram"> <i data-lucide="instagram" class="w-5 h-5 text-white"></i> </a>
+     <div class="flex justify-center gap-4 mb-8 reveal hidden "><a href="#" onclick="event.preventDefault(); showToast('📞 Numéro copié !')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110 hidden" style="background: var(--orange);" aria-label="Téléphone"> <i data-lucide="phone" class="w-5 h-5 text-white"></i> </a> <a href="#" onclick="event.preventDefault(); showToast('✉️ Adresse email copié !')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--pink);" aria-label="Email"> <i data-lucide="mail" class="w-5 h-5 text-white"></i> </a> <a href="#" onclick="event.preventDefault(); showToast('📍 Itinéraire')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--mint);" aria-label="Localisation"> <i data-lucide="map" class="w-5 h-5 text-white"></i> </a> <a href="#" onclick="event.preventDefault(); showToast('📷 Suivez-nous !')" class="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110" style="background: var(--yellow);" aria-label="Instagram"> <i data-lucide="instagram" class="w-5 h-5 text-white"></i> </a>
      </div>
      <div class="pt-6 border-t border-white/20">
       <p class="text-sm opacity-70">© 2026 <span id="footer-school">École Notre Dame</span> · Kermesse annuelle</p>
@@ -614,7 +858,7 @@ Bonbons :                 4 tampons
       textColor: '#FDF6E8',
       icon: 'music',
       emoji: '🎵',
-      description: 'Pour le bon déroulement de cette journée festive et afin d’en faciliter l’organisation, nous vous proposons la vente de menus et de cartes à points 💳 "Cartes Pass" valables pour les activités, boissons et goûters. Attention les Cartes ne sont pas remboursables. <p class="text-sm mb-3 opacity-90 reveal reveal-delay-2 ">📅 Votre enveloppe nominative de précommande sera disponible au retrait vendredi 26 juin entre 16h30 et 19h à l\'école. </p>',
+      description: 'Pour le bon déroulement de cette journée festive et afin d’en faciliter l’organisation, nous vous proposons la vente de menus et de cartes à points 💳 "Cartes Pass" valables pour les activités, boissons et goûters.<br/>Attention les Cartes ne sont pas remboursables. <p class="text-sm mb-3 opacity-90 reveal reveal-delay-2 ">📅 Votre enveloppe nominative de précommande sera disponible au retrait vendredi 26 juin entre 16h30 et 19h à l\'école. </p>',
       activity: 'Commander mes cartes pass',
 	  url : 'tests.url',
 	  i: 2
@@ -641,7 +885,7 @@ Bonbons :                 4 tampons
       icon: 'book-open',
       emoji: '💬',
       //description: '<p class="text-sm mb-4" style="color: var(--navy);">Avec votre carte Pass, achetez rafraîchissements et boissons. Pour tous à tous les moments ! <div class="bg-teal-50 rounded-xl p-4 text-sm" style="color: var(--navy);"><p class="text-sm mb-3 opacity-90 reveal reveal-delay-2 ">🥛 Soda</br>🧃 Jus de fruits</br>💧 Eau fraîche<br/>🍻 Bière blanche ou blonde<br/>☕ Café</p></div></p>',
-      description : '<p class="text-white/80 max-w-2xl mx-auto mb-10" style="margin-bottom:0px">Profitez de notre espace détente pour vous rafraîchir ou savourer une douceur sucrée entre deux activités.<br/>Tous les achats se font avec vos 💳 "Cartes Pass".<br/>⚠️ Note importante : <b>Pensez bien à prendre des 🥤 éco-cups! </b><br/>Des éco-cups seront en vente à la buvette pour <b>5 tampons</b>. Elles peuvent être rendus contre caution à partir de <b>17h</b> uniquement.</p><div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto p-4" style="margin-bottom:0px"><div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all " style="margin-bottom:0px"><div class="flex items-center gap-3 mb-6"><div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: var(--mint);">🥤</div><h3 class="font-display text-xl" style="color: var(--navy);">Buvette</h3></div><div class="bg-teal-50 rounded-xl p-4 text-sm" style="color: var(--navy);"><p class="text-xs">🧃 Soda et jus de fruit</p><p class="text-xs">☕ Café et thé</p><p class="text-xs">💧 Eau fraîche</p><p class="text-xs">🍻 Bière blanche ou blonde</p></div></div><div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all"><div class="flex items-center gap-3 mb-6"><div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: var(--pink);">🍰</div><h3 class="font-display text-xl" style="color: var(--navy);">Goûter</h3></div><div class="bg-pink-50 rounded-xl p-4 text-sm space-y-1" style="color: var(--navy);"><p class="text-xs">🥞 Crêpes</p><p class="text-xs">🎂 Gâteaux</p><p class="text-xs">🍿 Pop corn</p><p class="text-xs">🍭 Barbe à papa</p></div></div></div>',
+      description : '<p class="text-white/80 max-w-2xl mx-auto mb-10" style="margin-bottom:0px">Profitez de notre espace détente pour vous rafraîchir ou savourer une douceur sucrée entre deux activités.<br/>Tous les achats se font avec vos 💳 "Cartes Pass".<br/>⚠️ Note importante : <b>Pensez bien à prendre des 🥤 éco-cups! </b><br/>Des éco-cups seront en vente à la buvette pour <b>2 tampons</b>. Les consignes peuvent être rendues à partir de <b>17h</b> uniquement (1€).</p><div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto p-4" style="margin-bottom:0px"><div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all " style="margin-bottom:0px"><div class="flex items-center gap-3 mb-6"><div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: var(--mint);">🥤</div><h3 class="font-display text-xl" style="color: var(--navy);">Buvette</h3></div><div class="bg-teal-50 rounded-xl p-4 text-sm" style="color: var(--navy);"><p class="text-xs">🧃 Soda et jus de fruit</p><p class="text-xs">☕ Café et thé</p><p class="text-xs">💧 Eau fraîche</p><p class="text-xs">🍻 Bière blanche ou blonde</p></div></div><div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transition-all"><div class="flex items-center gap-3 mb-6"><div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style="background: var(--pink);">🍰</div><h3 class="font-display text-xl" style="color: var(--navy);">Goûter</h3></div><div class="bg-pink-50 rounded-xl p-4 text-sm space-y-1" style="color: var(--navy);"><p class="text-xs">🥞 Crêpes</p><p class="text-xs">🎂 Gâteaux</p><p class="text-xs">🍿 Pop corn</p><p class="text-xs">🍭 Barbe à papa</p></div></div></div>',
 	  activity: '',
 	  i:4
     },
@@ -655,8 +899,7 @@ Bonbons :                 4 tampons
       emoji: '💃',
       description: 'Chorégraphies préparées par les enfants ',
       activity: '',
-	  //additionalInfo : '<div class="w-1/2 max-w-2xl space-y-4"><div class="flex items-center space-x-4 border-l-4 border-white/50 pl-4"><span class="font-bold w-16">11h00</span><span class="bg-white/20 px-3 py-1 rounded">Messe (Église St Martin)</span></div><div class="flex items-center space-x-4 border-l-4 border-white/50 pl-4"><span class="font-bold w-16">12h00</span><span>Ouverture Restauration &amp; Buvette</span></div><div class="flex items-center space-x-4 border-l-4 border-white/50 pl-4"><span class="font-bold w-16">14h00</span><span class="font-bold  uppercase">Spectacle PS/MS</span></div><div class="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-white/20"><p class="text-xs uppercase opacity-70 col-span-2">Spectacles classes</p><div class="text-sm">14h30 - Claire (GS)</div><div class="text-sm">14h40 - Gwenaëlle (GS)</div><div class="text-sm">14h50 - CP (Béatrice/Caroline)</div><div class="text-sm font-bold">15h30 - TOMBOLA</div><div class="text-sm">16h00 - CE1 (Charlène)</div><div class="text-sm">17h00 - Marie (CM2)</div></div></div>',
-	  additionalInfo : '<div class="w-full max-w-2xl mx-auto px-4">   <div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/30 before:to-transparent">          <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#E87FA6] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">12h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Ouverture de la Kermesse, de la Restauration et Buvette</div>         <p class="text-sm text-white/80"> </p>       </div>     </div>      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F28C4A] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Ouverture des Stands de la Zone Elementaire</div>         <p class="text-sm text-white/80"></p>       </div>     </div>      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#7FC4B5] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Spectacle des PS et MS</div>         <p class="text-sm text-white/80">Représentation des enfants sur scène.</p>       </div>     </div>      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F28C4A] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h30</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Ouverture des Stands de la Zone Maternelle</div>         <p class="text-sm text-white/80"> </p>       </div>     </div> 	     <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F4C542] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h30</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Horaire des chorégraphies‍</div>         <p class="text-sm text-white/80"> 14h30 - Claire (GS)<br/> 14h40 - Gwenaëlle (GS)<br/> 14h50 - Béatrice et Clémence (CP)<br/> 15h00 - Laurence (CP) et Marie-Pierre (CP/CE1)<br/> 15h15 - Pause<br/> 15h30 - Tirage de la tombola<br/> 16h - Charlène (CE1)<br/> 16h10 - Chalère et Sabine (CE1)<br/> 16h10 - Floriane et Izabella(CE2)<br/> 16h20 - Cécile BIZEUL (CE2)<br/> 16h30 - Gwenaëlle et Emmanuelle (CM1)<br/> 16h40 - Nathalie (CM1)<br/> 16h50 - Marie (CM2)<br/> 17h00 - Cécile BONNEAU et Emmanuelle (CM2)<br/> </p>       </div>     </div>     	 	<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F4C542] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">18h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Fermeture des stands</div>         <p class="text-sm text-white/80"></p>       </div>     </div>    </div> </div>',
+	  additionalInfo : '<div class="w-full max-w-2xl mx-auto px-4">   <div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/30 before:to-transparent">          <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#E87FA6] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">12h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Ouverture de la Kermesse, de la Restauration et Buvette</div>         <p class="text-sm text-white/80"> </p>       </div>     </div>      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F28C4A] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Ouverture des Stands de la Zone Elementaire</div>         <p class="text-sm text-white/80"></p>       </div>     </div>      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#7FC4B5] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Spectacle des PS et MS</div>         <p class="text-sm text-white/80">Représentation des enfants sur scène.</p>       </div>     </div>      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F28C4A] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h30</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Ouverture des Stands de la Zone Maternelle</div>         <p class="text-sm text-white/80"> </p>       </div>     </div> 	     <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F4C542] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">14h30</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Horaire des chorégraphies‍</div>         <p class="text-sm text-white/80"> 14h30 - Claire (GS)<br/> 14h40 - Gwenaëlle (GS)<br/> 14h50 - Béatrice et Clémence (CP)<br/> 15h00 - Laurence (CP) et Marie-Pierre (CP/CE1)<br/> 15h15 - Pause<br/> 15h30 - Tirage de la tombola<br/> 16h - Charlène et Sabine (CE1)<br/> 16h10 - Floriane et Izabella(CE2)<br/> 16h20 - Cécile BIZEUL (CE2)<br/> 16h30 - Gwenaëlle et Emmanuelle (CM1)<br/> 16h40 - Nathalie (CM1)<br/> 16h50 - Marie (CM2)<br/> 17h00 - Cécile BONNEAU et Emmanuelle (CM2)<br/> </p>       </div>     </div>     	 	<div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">       <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-[#F4C542] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">         <span class="text-white text-xs font-bold">18h</span>       </div>       <div class="w-[calc(100%-3rem)] md:w-[45%] bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 shadow-xl">         <div class="font-bold text-white">Fermeture des stands</div>         <p class="text-sm text-white/80"></p>       </div>     </div>    </div> </div>',
 	  i:5
     },
     {
@@ -922,7 +1165,7 @@ Bonbons :                 4 tampons
   // Create progress navigation
   function createProgressNav() {
     const nav = document.getElementById('progress-nav');
-    const totalSections = artSections.length + 5; // hero + city + arts + footer
+    const totalSections = artSections.length + 6; // hero + city + arts + footer
     for (let i = 0; i < totalSections; i++) {
       const dot = document.createElement('button');
       dot.className = 'progress-dot';
@@ -1007,7 +1250,7 @@ Bonbons :                 4 tampons
     event_location: "École Notre Dame",
     footer_slogan: "Kermesse Notre Dame de Cesson-Sévigné",
     contact_phone: "01 23 45 67 89",
-    contact_email: "contact@ecole-notredame.fr"
+    contact_email: "equipe.apel.notredame@gmail.com"
   };
 
   function onConfigChange(config) {
