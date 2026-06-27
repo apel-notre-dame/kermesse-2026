@@ -189,19 +189,17 @@
 
     </div>
 
-    <script>
+<script>
         // CONFIGURATION DE VOTRE GOOGLE FORM
-        // Remplacez par vos vrais identifiants récupérés à l'étape 1 :
         const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdjRoFPp6GHsph4mzkxeIIndGsokzlEXH5XqRHrXYb0Ehzj1Q/formResponse";
-        const GOOGLE_ENTRY_ID = "entry.1782294951";
-        
+        const GOOGLE_ENTRY_ID = "entry.1782294951"; // Vérifié et validé
+                
         // Fonction pour charger et afficher les scores au démarrage (Session locale)
         function displayScores() {
             const leaderboardBody = document.getElementById('leaderboardBody');
             let scores = JSON.parse(localStorage.getItem('kermesseScores')) || [];
 
             leaderboardBody.innerHTML = '';
-
             if (scores.length === 0) {
                 leaderboardBody.innerHTML = '<tr><td colspan="3" style="color:#aaa; font-size:1rem;">La liste est vide... Sois le premier !</td></tr>';
                 return;
@@ -221,7 +219,7 @@
         }
 
         // Fonction pour enregistrer un nouveau nom et l'envoyer sur Google Form
-       function saveScore() {
+        function saveScore() {
             const nameInput = document.getElementById('playerName');
             const name = nameInput.value.trim().toUpperCase();
 
@@ -234,16 +232,20 @@
             const now = new Date();
             const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-            // 1. ENVOI SILENCIEUX VERS GOOGLE FORMS (Correction de l'encodage ici)
+            // 1. ENVOI SILENCIEUX VERS GOOGLE FORMS
             const searchParams = new URLSearchParams();
             searchParams.append(GOOGLE_ENTRY_ID, name);
 
-            // On utilise URLSearchParams au lieu de FormData pour avoir le format x-www-form-urlencoded requis par Google
-           fetch(GOOGLE_FORM_URL,{ method: "POST", mode: "no-cors", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            fetch(GOOGLE_FORM_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
                 body: searchParams.toString()
             })
             .then(() => {
-                console.log("Enregistré sur Google Forms !");
+                console.log("Donnée envoyée vers Google Forms !");
             })
             .catch((error) => {
                 console.error("Erreur d'envoi Google Form:", error);
@@ -251,7 +253,7 @@
 
             // 2. SAUVEGARDE LOCALE POUR AFFICHAGE IMMÉDIAT
             let scores = JSON.parse(localStorage.getItem('kermesseScores')) || [];
-            scores.unshift({ name: name, date: timeString }); // On l'ajoute en haut de liste
+            scores.unshift({ name: name, date: timeString }); 
             localStorage.setItem('kermesseScores', JSON.stringify(scores));
 
             // Cacher le formulaire
