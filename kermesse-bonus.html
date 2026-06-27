@@ -190,16 +190,18 @@
     </div>
 
     <script>
-        // Fonction pour charger et afficher les scores au démarrage
+        // CONFIGURATION DE VOTRE GOOGLE FORM
+        // Remplacez par vos vrais identifiants récupérés à l'étape 1 :
+        const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdjRoFPp6GHsph4mzkxeIIndGsokzlEXH5XqRHrXYb0Ehzj1Q/formResponse";
+        const GOOGLE_ENTRY_ID = "entry.1782294951";
+
+        // Fonction pour charger et afficher les scores au démarrage (Session locale)
         function displayScores() {
             const leaderboardBody = document.getElementById('leaderboardBody');
-            // On récupère les scores enregistrés, ou un tableau vide s'il n'y en a pas encore
             let scores = JSON.parse(localStorage.getItem('kermesseScores')) || [];
 
-            // On vide le tableau HTML actuel
             leaderboardBody.innerHTML = '';
 
-            // Si aucun score, on met un message sympa
             if (scores.length === 0) {
                 leaderboardBody.innerHTML = '<tr><td colspan="3" style="color:#aaa; font-size:1rem;">La liste est vide... Sois le premier !</td></tr>';
                 return;
@@ -218,7 +220,7 @@
             });
         }
 
-        // Fonction pour enregistrer un nouveau nom
+        // Fonction pour enregistrer un nouveau nom et l'envoyer sur Google Form
         function saveScore() {
             const nameInput = document.getElementById('playerName');
             const name = nameInput.value.trim().toUpperCase();
@@ -232,17 +234,31 @@
             const now = new Date();
             const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-            // Récupérer la liste existante
+            // 1. ENVOI SILENCIEUX VERS GOOGLE FORMS
+            const formData = new FormData();
+            formData.append(GOOGLE_ENTRY_ID, name);
+
+            // On envoie la requête en mode 'no-cors' car Google Forms ne renvoie pas d'autorisation CORS standard,
+            // mais les données sont correctement enregistrées dans votre tableau !
+            fetch(GOOGLE_FORM_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: formData
+            })
+            .then(() => {
+                console.log("Enregistré sur Google Forms !");
+            })
+            .catch((error) => {
+                console.error("Erreur d'envoi Google Form:", error);
+            });
+
+            // 2. SAUVEGARDE LOCALE POUR AFFICHAGE IMMÉDIAT
             let scores = JSON.parse(localStorage.getItem('kermesseScores')) || [];
-
-            // Ajouter le nouveau joueur
-            scores.push({ name: name, date: timeString });
-
-            // Sauvegarder dans le navigateur
+            scores.unshift({ name: name, date: timeString }); // On l'ajoute en haut de liste
             localStorage.setItem('kermesseScores', JSON.stringify(scores));
 
-            // Cacher le formulaire pour éviter de s'inscrire 10 fois d'affilée
-            document.getElementById('formSection').style.display = 'none';
+            // Cacher le formulaire
+            document.getElementById('formSection').innerHTML = "<h3 style='color:#ffff00; margin:0;'>🚀 Inscription validée avec succès !</h3>";
 
             // Mettre à jour l'affichage
             displayScores();
