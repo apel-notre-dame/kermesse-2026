@@ -221,7 +221,7 @@
         }
 
         // Fonction pour enregistrer un nouveau nom et l'envoyer sur Google Form
-        function saveScore() {
+       function saveScore() {
             const nameInput = document.getElementById('playerName');
             const name = nameInput.value.trim().toUpperCase();
 
@@ -234,16 +234,18 @@
             const now = new Date();
             const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-            // 1. ENVOI SILENCIEUX VERS GOOGLE FORMS
-            const formData = new FormData();
-            formData.append(GOOGLE_ENTRY_ID, name);
+            // 1. ENVOI SILENCIEUX VERS GOOGLE FORMS (Correction de l'encodage ici)
+            const searchParams = new URLSearchParams();
+            searchParams.append(GOOGLE_ENTRY_ID, name);
 
-            // On envoie la requête en mode 'no-cors' car Google Forms ne renvoie pas d'autorisation CORS standard,
-            // mais les données sont correctement enregistrées dans votre tableau !
+            // On utilise URLSearchParams au lieu de FormData pour avoir le format x-www-form-urlencoded requis par Google
             fetch(GOOGLE_FORM_URL, {
                 method: "POST",
                 mode: "no-cors",
-                body: formData
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: searchParams.toString()
             })
             .then(() => {
                 console.log("Enregistré sur Google Forms !");
