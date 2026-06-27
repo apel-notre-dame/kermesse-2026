@@ -192,9 +192,8 @@
 <script>
         // CONFIGURATION DE VOTRE GOOGLE FORM
         const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdjRoFPp6GHsph4mzkxeIIndGsokzlEXH5XqRHrXYb0Ehzj1Q/formResponse";
-        const GOOGLE_ENTRY_ID = "entry.1782294951"; // Vérifié et validé
+        const GOOGLE_ENTRY_ID = "entry.1782294951";
                 
-        // Fonction pour charger et afficher les scores au démarrage (Session locale)
         function displayScores() {
             const leaderboardBody = document.getElementById('leaderboardBody');
             let scores = JSON.parse(localStorage.getItem('kermesseScores')) || [];
@@ -205,7 +204,6 @@
                 return;
             }
 
-            // On affiche jusqu'au top 10
             scores.slice(0, 10).forEach((player, index) => {
                 let row = `
                     <tr>
@@ -218,7 +216,6 @@
             });
         }
 
-        // Fonction pour enregistrer un nouveau nom et l'envoyer sur Google Form
         function saveScore() {
             const nameInput = document.getElementById('playerName');
             const name = nameInput.value.trim().toUpperCase();
@@ -228,7 +225,6 @@
                 return;
             }
 
-            // Récupérer la date et l'heure actuelle (Format: 14h32)
             const now = new Date();
             const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
@@ -238,32 +234,26 @@
 
             fetch(GOOGLE_FORM_URL, {
                 method: "POST",
-                mode: "no-cors",
+                mode: "no-cors", 
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
                 body: searchParams.toString()
-            })
-            .then(() => {
-                console.log("Donnée envoyée vers Google Forms !");
-            })
-            .catch((error) => {
-                console.error("Erreur d'envoi Google Form:", error);
-            });
+            }); 
+            // Note : On retire le .then() et .catch() ici car en mode "no-cors", 
+            // le navigateur lève TOUJOURS une fausse erreur CORS même si Google a bien traité la demande.
 
-            // 2. SAUVEGARDE LOCALE POUR AFFICHAGE IMMÉDIAT
+            // 2. SAUVEGARDE LOCALE POUR AFFICHAGE IMMÉDIAT (Exécutée quoi qu'il arrive)
             let scores = JSON.parse(localStorage.getItem('kermesseScores')) || [];
             scores.unshift({ name: name, date: timeString }); 
             localStorage.setItem('kermesseScores', JSON.stringify(scores));
 
-            // Cacher le formulaire
+            // Cacher le formulaire et valider visuellement
             document.getElementById('formSection').innerHTML = "<h3 style='color:#ffff00; margin:0;'>🚀 Inscription validée avec succès !</h3>";
 
-            // Mettre à jour l'affichage
             displayScores();
         }
 
-        // Charger les scores dès que la page s'ouvre
         window.onload = displayScores;
     </script>
 </body>
